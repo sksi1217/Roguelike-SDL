@@ -1,4 +1,8 @@
-#pragma once
+﻿#pragma once
+#ifndef MANAGERGAME_H
+#define MANAGERGAME_H
+
+
 #include "../Abstracts/GameObject.h"
 #include <vector>
 
@@ -7,3 +11,4 @@ public:
     static std::vector<GameObject*> gameObjects;
     static std::vector<GameObject*> enemies;
 };
+#endif // MANAGERGAME_H

@@ -1,5 +1,6 @@
 ﻿#include "Help.h"
 #include <iostream>
+#include <random>
 
 // Method for loading a texture
 SDL_Texture* Help::LoadTexture(SDL_Renderer* renderer, const std::string& filePath) {
@@ -58,4 +59,11 @@ SDL_FPoint Help::Add(const SDL_FPoint& a, const SDL_FPoint& b) {
 
 float Help::Distance(const SDL_FPoint& a, const SDL_FPoint& b) {
     return std::sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+
+float Help::NextFloat() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<> dis(0.0f, 1.0f);
+    return dis(gen);
 }

@@ -158,6 +158,8 @@
     <ClCompile Include="Statics\Help.cpp" />
     <ClCompile Include="Statics\ManagerGame.cpp" />
     <ClCompile Include="Textures\Animation.cpp" />
+    <ClCompile Include="Weapons\MagicStick.cpp" />
+    <ClCompile Include="Weapons\Projectiles\MagicSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Abstracts\GameObject.h" />

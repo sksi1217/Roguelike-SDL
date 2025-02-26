@@ -1,34 +1,39 @@
-﻿#include "Projectile.h"
+﻿// Projectile.cpp
+#include "Projectile.h"
+#include <iostream>
 
-Projectile::Projectile(SDL_Texture* texture, SDL_FPoint startPosition, SDL_FPoint velocity, float damage, float lifetime)
-    : GameObject() {
+Projectile::Projectile(SDL_Texture* texture, SDL_FPoint position, SDL_FPoint velocity, int damage, float lifetime)
+{
+    if (texture == nullptr) std::cerr << "Failed texture: " << SDL_GetError() << std::endl; return;
+    if (lifetime <= 0) std::cerr << "Failed lifetime: " << SDL_GetError() << std::endl; return;
+
+    // Присваивания значения
     Texture = texture;
-    Position = startPosition;
-    Velocity = velocity;
+    Position = position;
+    Speed = 10;
     Damage = damage;
     Lifetime = lifetime;
-    CurrentLifetime = 0.0f;
-    IsActive = true;
-    IsCollidable = true;
+
+    // Стандартные настройки
+    Origin = { 8, 8 };
+    Scale = 0.5f;
+    Position = position;
 }
 
-Projectile::~Projectile() {};
-
-
-
 void Projectile::Update(float deltaTime) {
+    if (!IsActive) return;
+
+    // Обновляем текущее время жизни
+    CurrentLifetime += deltaTime;
     if (CurrentLifetime >= Lifetime) {
-        IsActive = false; // Пуля исчезает после истечения времени жизни
+        IsActive = false;
         return;
     }
 
-    // Обновление позиции пули
+    // Обновляем позицию пули
     Position.x += Velocity.x * deltaTime;
     Position.y += Velocity.y * deltaTime;
 
-    // Увеличение времени жизни
-    CurrentLifetime += deltaTime;
+    // Проверяем столкновения
 
-    // Обновление коллайдера
-    ColliderPosition();
 }

@@ -1,7 +1,9 @@
-#include "Player.h"
+﻿#include "Player.h"
 #include <cmath>
 #include <iostream>
-#include "../Statics/ManagerGame.h"
+#include "../Weapons/MagicStick.h"
+
+
 
 Player::Player(SDL_Texture* texture, SDL_FPoint startPosition) : GameObject() 
 {
@@ -24,6 +26,12 @@ Player::Player(SDL_Texture* texture, SDL_FPoint startPosition) : GameObject()
     OffsetColliderY = 4;
     WidthColliderX = 8;
     HeightColliderY = 4;
+
+
+    MagicStick* _magicStick = new MagicStick(texture, { 50, 0 });
+
+    // Используем unique_ptr для управления памятью
+    _allWeapons.emplace_back(std::make_unique<MagicStick>(texture, Position));
 }
 
 void Player::Update(float deltaTime) {
@@ -39,10 +47,13 @@ void Player::Update(float deltaTime) {
 
     HandleCollisions();
 
+    HandleWeaponInteraction(deltaTime);
+
     bool isMoving = (velocity.x != 0.0f || velocity.y != 0.0f);
     animation->Update(isMoving, static_cast<Uint32>(deltaTime * 1000.0f));
 }
 
+// Управлением персонажем
 void Player::HandleMovementInput(const Uint8* keyboardState, SDL_FPoint& velocity) {
     if (keyboardState[SDL_SCANCODE_A]) velocity.x -= 1.0f;
     if (keyboardState[SDL_SCANCODE_D]) velocity.x += 1.0f;
@@ -58,6 +69,7 @@ void Player::HandleMovementInput(const Uint8* keyboardState, SDL_FPoint& velocit
     }
 }
 
+// Обновление спрайтов
 void Player::UpdateSpriteRow(const SDL_FPoint& velocity) {
     if (std::abs(velocity.x) > std::abs(velocity.y)) {
         SpriteRow = (velocity.x > 0.0f) ? RightRow : LeftRow;
@@ -67,11 +79,29 @@ void Player::UpdateSpriteRow(const SDL_FPoint& velocity) {
     }
 }
 
+// Проверка на столкновение
 void Player::HandleCollisions() {
     for (auto obj : ManagerGame::gameObjects) {
         if (obj != this && CheckCollision(*obj)) {
             ResolveCollision(obj);
             break;
+        }
+    }
+}
+
+void Player::HandleWeaponInteraction(float deltaTime) {
+    if (_allWeapons.size() > 0) {
+        for (const auto& weaponPtr : _allWeapons) { // Итерация по unique_ptr
+            if (!weaponPtr) continue; // Проверка на null-указатель
+
+            // Обновляем позицию оружия
+            weaponPtr->Position = Position;
+
+            // Находим ближайшего врага
+            weaponPtr->nearestEnemy = weaponPtr->FindNearestEnemy();
+
+            // Выполняем выстрел
+            weaponPtr->Shoot(deltaTime);
         }
     }
 }

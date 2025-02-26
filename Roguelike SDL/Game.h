@@ -1,8 +1,12 @@
-#pragma once
+﻿#pragma once
 #ifndef GAME_H
 #define GAME_H
 
 #include "Abstracts/GameObject.h"
+#include "Statics/ManagerGame.h"
+#include "Models/EnemySkelet.h"
+#include "Models/Player.h"
+#include "Statics/Help.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <string>

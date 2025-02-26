@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../Abstracts/GameObject.h"
 #include "../Abstracts/Weapon.h"
@@ -13,9 +13,12 @@ public:
     void Update(float deltaTime) override;
 
 private:
+    std::vector<std::unique_ptr<Weapon>> _allWeapons; // Используем unique_ptr
+
     void HandleMovementInput(const Uint8* keyboardState, SDL_FPoint& velocity);
     void UpdateSpriteRow(const SDL_FPoint& velocity);
     void HandleCollisions();
+    void HandleWeaponInteraction(float deltaTime);
 
     enum Direction {
         DownRow = 1,
@@ -23,6 +26,4 @@ private:
         RightRow = 3,
         LeftRow = 4, 
     };
-
-    std::vector<Weapon*> weapons;
 };

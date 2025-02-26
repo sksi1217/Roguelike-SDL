@@ -29,4 +29,7 @@ public:
 
     // Расчет расстояния между двумя точками
     static float Distance(const SDL_FPoint& a, const SDL_FPoint& b);
+
+    // Генерация случайного числа от 0 до 1
+    static float NextFloat();
 };
