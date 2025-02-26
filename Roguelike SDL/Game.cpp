@@ -95,6 +95,7 @@ void Game::LoadContent() {
     box1->WidthColliderX = 16;
     box1->HeightColliderY = 16;
     box1->Texture = boxTexture;
+    box1->IsStatic = true;
     ManagerGame::gameObjects.push_back(box1);
 
 
@@ -104,6 +105,7 @@ void Game::LoadContent() {
     box2->WidthColliderX = 16;
     box2->HeightColliderY = 16;
     box2->Texture = boxTexture;
+    box2->IsStatic = true;
     ManagerGame::gameObjects.push_back(box2);
 }
 

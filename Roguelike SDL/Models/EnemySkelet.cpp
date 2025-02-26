@@ -13,7 +13,7 @@ EnemySkelet::EnemySkelet(SDL_Texture* texture, SDL_FPoint startPosition)
 
     Texture = texture;
     Position = startPosition;
-    Speed = 20.0f;
+    Speed = 0.0f;
 
     Mass = 1;
 
@@ -34,9 +34,6 @@ void EnemySkelet::UpdatePosPlr(SDL_FPoint& plrPosition)
 }
 
 void EnemySkelet::Update(float deltaTime) {
-    std::cout << "_playerPos.x " << _playerPos.x << std::endl;
-    std::cout << "_playerPos.y " << _playerPos.y << std::endl;
-
     direction = { _playerPos.x - Position.x, _playerPos.y - Position.y };
     NormalizeDirection();
 

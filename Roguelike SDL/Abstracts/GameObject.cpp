@@ -75,24 +75,35 @@ void GameObject::OnTriggerEnter(GameObject* object) {}
 void GameObject::Action(GameObject* object) {}
 
 void GameObject::ApplyRepulsion(GameObject* obj, GameObject* other) {
-    // Ğàñ÷¸ò íàïğàâëåíèÿ è ğàññòîÿíèÿ ìåæäó îáúåêòàìè
-    SDL_FPoint direction = GameObject::Subtract(obj->Position, other->Position);
-    float distance = Length(direction);
+    if (other->IsStatic) return;
 
+    // Ğàñ÷¸ò öåíòğîâ îáúåêòîâ
+    SDL_FPoint centerA = { obj->Position.x + obj->WidthColliderX / 2.0f, obj->Position.y + obj->HeightColliderY / 2.0f };
+    SDL_FPoint centerB = { other->Position.x + other->WidthColliderX / 2.0f, other->Position.y + other->HeightColliderY / 2.0f };
+
+    // Âû÷èñëÿåì âåêòîğ ìåæäó öåíòğàìè îáúåêòîâ
+    SDL_FPoint direction = Subtract(centerA, centerB);
+
+    // Âû÷èñëÿåì ğàññòîÿíèå ìåæäó öåíòğàìè îáúåêòîâ
+    float distance = Length(direction);
     if (distance == 0.0f) {
         distance = 0.001f; // Èçáåãàåì äåëåíèå íà íîëü
     }
 
-    direction = Normalize(direction); // Íîğìàëèçóåì âåêòîğ íàïğàâëåíèÿ
+    // Íîğìàëèçóåì âåêòîğ íàïğàâëåíèÿ
+    SDL_FPoint normalizedDirection = Normalize(direction);
 
     // Ñèëà îòòàëêèâàíèÿ ïğîïîğöèîíàëüíà ìàññàì îáúåêòîâ
     float combinedMass = obj->Mass + other->Mass;
     float force = obj->PushForce * (obj->Mass / combinedMass);
 
     // Ïğèìåíÿåì ñèëó ê îáîèì îáúåêòàì
-    SDL_FPoint pushVector = Multiply(direction, force);
+    SDL_FPoint pushVector = Multiply(normalizedDirection, force);
 
+    // Îáúåêò obj îòòàëêèâàåòñÿ â ñòîğîíó other
     obj->Position = Add(obj->Position, pushVector);
+
+    // Îáúåêò other îòòàëêèâàåòñÿ â ïğîòèâîïîëîæíóş ñòîğîíó
     other->Position = Subtract(other->Position, Multiply(pushVector, other->Mass / obj->Mass));
 }
 
