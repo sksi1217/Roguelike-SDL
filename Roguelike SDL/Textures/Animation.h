@@ -1,7 +1,4 @@
 #pragma once
-#ifndef ANIMATION_H
-#define ANIMATION_H
-
 #include <SDL.h>
 #include <cstdint>
 
@@ -28,5 +25,3 @@ public:
     // Getting the rectangle of the current frame
     SDL_Rect GetCurrentFrameRectangle(int spriteRow) const;
 };
-
-#endif // ANIMATION_H

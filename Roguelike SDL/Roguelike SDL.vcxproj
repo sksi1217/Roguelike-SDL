@@ -148,6 +148,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Abstracts\GameObject.cpp" />
+    <ClCompile Include="Abstracts\Projectile.cpp" />
+    <ClCompile Include="Abstracts\Weapon.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
@@ -159,6 +161,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Abstracts\GameObject.h" />
+    <ClInclude Include="Abstracts\Projectile.h" />
+    <ClInclude Include="Abstracts\Weapon.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Models\EnemySkelet.h" />
@@ -166,6 +170,8 @@
     <ClInclude Include="Statics\Help.h" />
     <ClInclude Include="Statics\ManagerGame.h" />
     <ClInclude Include="Textures\Animation.h" />
+    <ClInclude Include="Weapons\MagicStick.h" />
+    <ClInclude Include="Weapons\Projectiles\MagicSphere.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\Models\box.bmp" />

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Abstracts/GameObject.h"
+#include "../Abstracts/Weapon.h"
 #include <SDL.h>
 #include <unordered_set>
 #include <vector>
@@ -22,4 +23,6 @@ private:
         RightRow = 3,
         LeftRow = 4, 
     };
+
+    std::vector<Weapon*> weapons;
 };

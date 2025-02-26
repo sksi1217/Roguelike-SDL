@@ -1,7 +1,8 @@
-#include "GameObject.h"
+п»ї#include "GameObject.h"
 #include "../Textures/Animation.h"
 #include <iostream>
 #include <SDL_image.h>
+#include "../Statics/Help.h"
 
 GameObject::GameObject() {}
 
@@ -14,8 +15,9 @@ GameObject::~GameObject() {
 
 // Updating the state of the object
 void GameObject::Update(float deltaTime) {
-    ColliderPosition(); // Обновляем позицию коллайдера
+    ColliderPosition(); // РћР±РЅРѕРІР»СЏРµРј РїРѕР·РёС†РёСЋ РєРѕР»Р»Р°Р№РґРµСЂР°
 }
+
 
 // A method for collision resolution
 void GameObject::ResolveCollision(GameObject* other) {
@@ -55,6 +57,7 @@ void GameObject::ColliderPosition() {
     }
 }
 
+
 // Checking collision with another object
 bool GameObject::CheckCollision(const GameObject& other) const {
     if (!IsCollidable || !other.IsCollidable) return false;
@@ -68,44 +71,48 @@ bool GameObject::CheckCollision(const GameObject& other) const {
         rectB.y + rectB.h <= rectA.y);
 }
 
+
 // Collision handling
 void GameObject::OnTriggerEnter(GameObject* object) {}
+
 
 // Collision handling
 void GameObject::Action(GameObject* object) {}
 
+
 void GameObject::ApplyRepulsion(GameObject* obj, GameObject* other) {
     if (other->IsStatic) return;
 
-    // Расчёт центров объектов
+    // Р Р°СЃС‡С‘С‚ С†РµРЅС‚СЂРѕРІ РѕР±СЉРµРєС‚РѕРІ
     SDL_FPoint centerA = { obj->Position.x + obj->WidthColliderX / 2.0f, obj->Position.y + obj->HeightColliderY / 2.0f };
     SDL_FPoint centerB = { other->Position.x + other->WidthColliderX / 2.0f, other->Position.y + other->HeightColliderY / 2.0f };
 
-    // Вычисляем вектор между центрами объектов
-    SDL_FPoint direction = Subtract(centerA, centerB);
+    // Р’С‹С‡РёСЃР»СЏРµРј РІРµРєС‚РѕСЂ РјРµР¶РґСѓ С†РµРЅС‚СЂР°РјРё РѕР±СЉРµРєС‚РѕРІ
+    SDL_FPoint direction = Help::Subtract(centerA, centerB);
 
-    // Вычисляем расстояние между центрами объектов
-    float distance = Length(direction);
+    // Р’С‹С‡РёСЃР»СЏРµРј СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ С†РµРЅС‚СЂР°РјРё РѕР±СЉРµРєС‚РѕРІ
+    float distance = Help::Length(direction);
     if (distance == 0.0f) {
-        distance = 0.001f; // Избегаем деление на ноль
+        distance = 0.001f; // РР·Р±РµРіР°РµРј РґРµР»РµРЅРёРµ РЅР° РЅРѕР»СЊ
     }
 
-    // Нормализуем вектор направления
-    SDL_FPoint normalizedDirection = Normalize(direction);
+    // РќРѕСЂРјР°Р»РёР·СѓРµРј РІРµРєС‚РѕСЂ РЅР°РїСЂР°РІР»РµРЅРёСЏ
+    SDL_FPoint normalizedDirection = Help::Normalize(direction);
 
-    // Сила отталкивания пропорциональна массам объектов
+    // РЎРёР»Р° РѕС‚С‚Р°Р»РєРёРІР°РЅРёСЏ РїСЂРѕРїРѕСЂС†РёРѕРЅР°Р»СЊРЅР° РјР°СЃСЃР°Рј РѕР±СЉРµРєС‚РѕРІ
     float combinedMass = obj->Mass + other->Mass;
     float force = obj->PushForce * (obj->Mass / combinedMass);
 
-    // Применяем силу к обоим объектам
-    SDL_FPoint pushVector = Multiply(normalizedDirection, force);
+    // РџСЂРёРјРµРЅСЏРµРј СЃРёР»Сѓ Рє РѕР±РѕРёРј РѕР±СЉРµРєС‚Р°Рј
+    SDL_FPoint pushVector = Help::Multiply(normalizedDirection, force);
 
-    // Объект obj отталкивается в сторону other
-    obj->Position = Add(obj->Position, pushVector);
+    // РћР±СЉРµРєС‚ obj РѕС‚С‚Р°Р»РєРёРІР°РµС‚СЃСЏ РІ СЃС‚РѕСЂРѕРЅСѓ other
+    obj->Position = Help::Add(obj->Position, pushVector);
 
-    // Объект other отталкивается в противоположную сторону
-    other->Position = Subtract(other->Position, Multiply(pushVector, other->Mass / obj->Mass));
+    // РћР±СЉРµРєС‚ other РѕС‚С‚Р°Р»РєРёРІР°РµС‚СЃСЏ РІ РїСЂРѕС‚РёРІРѕРїРѕР»РѕР¶РЅСѓСЋ СЃС‚РѕСЂРѕРЅСѓ
+    other->Position = Help::Subtract(other->Position, Help::Multiply(pushVector, other->Mass / obj->Mass));
 }
+
 
 // Object rendering
 void GameObject::Draw(SDL_Renderer* renderer, const Camera& camera) {
