@@ -3,11 +3,11 @@
 #include <iostream>
 #include "../Weapons/MagicStick.h"
 
-Weapon weapon; // Оружие персонажа
+//Weapon weapon; // Оружие персонажа
 float ElapsedTime = 0;
 SDL_Texture* BulletTexture;
 
-Player::Player(SDL_Texture* texture, SDL_FPoint startPosition, SDL_Texture* texture1) : GameObject()
+Player::Player(SDL_Texture* texture, SDL_FPoint startPosition) : GameObject()
 {
 	if (!texture) {
 		throw std::invalid_argument("Texture cannot be null.");
@@ -29,7 +29,6 @@ Player::Player(SDL_Texture* texture, SDL_FPoint startPosition, SDL_Texture* text
 	WidthColliderX = 8;
 	HeightColliderY = 4;
 
-	BulletTexture = texture1;
 	// MagicStick* _magicStick = new MagicStick(texture, { 50, 0 });
 
 	// Используем unique_ptr для управления памятью
@@ -97,10 +96,10 @@ void Player::HandleWeaponInteraction(float deltaTime) {
 	ElapsedTime += deltaTime;
 
 	// Если не идёт залп и прошло достаточно времени для начала нового залпа
-	if (ElapsedTime >= 5) {
-		//if (_allWeapons.size() > 0) {
-			//for (const auto& weaponPtr : _allWeapons) { // Итерация по unique_ptr
-				//if (!weaponPtr) continue; // Проверка на null-указатель
+	if (ElapsedTime >= 1) {
+		if (_allWeapons.size() > 0) {
+			for (const auto& weaponPtr : _allWeapons) { // Итерация по unique_ptr
+				if (!weaponPtr) continue; // Проверка на null-указатель
 
 				// Обновляем позицию оружия
 				// weaponPtr->Position = Position;
@@ -109,8 +108,9 @@ void Player::HandleWeaponInteraction(float deltaTime) {
 				// weaponPtr->nearestEnemy = weaponPtr->FindNearestEnemy();
 
 				// Выполняем выстрел
-		weapon.shoot({0, 20}, { 50, 10 }, BulletTexture);
-		//}
-		ElapsedTime = 0;
+				weaponPtr->Shoot(Position);
+			}
+			ElapsedTime = 0;
+		}
 	}
 }

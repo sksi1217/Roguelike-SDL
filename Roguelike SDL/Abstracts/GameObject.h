@@ -69,6 +69,7 @@ public:
     bool CheckCollision(const GameObject& other) const; // Checks for collision with another object
 
     void ApplyRepulsion(GameObject* obj, GameObject* other);
+
 };
 
 #endif // GAMEOBJECT_H

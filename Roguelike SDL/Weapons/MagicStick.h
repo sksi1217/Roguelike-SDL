@@ -7,5 +7,5 @@
 
 class MagicStick : public Weapon {
 public:
-   
+	MagicStick(SDL_Texture* texture) : Weapon(texture) {}
 };

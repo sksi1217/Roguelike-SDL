@@ -11,7 +11,7 @@ class Player : public GameObject {
 public:
     std::vector<std::unique_ptr<Weapon>> _allWeapons; // Используем unique_ptr
 
-    Player(SDL_Texture* texture, SDL_FPoint startPosition, SDL_Texture* texture1);
+    Player(SDL_Texture* texture, SDL_FPoint startPosition);
     void Update(float deltaTime) override;
 
 private:

@@ -12,5 +12,6 @@ void ManagerGame::AddGameObject(std::unique_ptr<GameObject> obj) {
 }
 
 void ManagerGame::Clear() {
-    gameObjects.clear();
+    gameObjects.clear(); // Очищаем все объекты
+    enemies.clear();     // Очищаем всех врагов
 }

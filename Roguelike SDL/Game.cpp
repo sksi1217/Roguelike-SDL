@@ -9,7 +9,7 @@ const int SCREEN_HEIGHT = 600;
 
 Player* _player;
 EnemySkelet* _skelet;
-//MagicStick* _magicStick;
+MagicStick* _magicStick;
 
 Camera camera = { {800, 600}, 5 };
 
@@ -54,8 +54,14 @@ Game::Game(const char* title, int width, int height) {
 
 // Destructor
 Game::~Game() {
+	std::cout << "Destroying game objects..." << std::endl;
+	ManagerGame::Clear();
+
+	std::cout << "Destroying renderer and window..." << std::endl;
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+
+	std::cout << "Quitting SDL_image and SDL..." << std::endl;
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -70,18 +76,16 @@ void Game::Initialize() {
 void Game::LoadContent() {
 	std::cout << "Loading content..." << std::endl;
 
-	SDL_Texture* BulletTexture = Help::LoadTexture(renderer, "Textures/Models/box.bmp");
-
-
 	// Loading player texture
 	SDL_Texture* playerTexture = Help::LoadTexture(renderer, "Textures/Models/player1.bmp");
-	_player = new Player(playerTexture, { 0, 10 }, BulletTexture);
+	_player = new Player(playerTexture, { 0, 10 });
 	ManagerGame::gameObjects.emplace_back(_player); // Adding a player to the object list
 
 
-
-	//_magicStick = new MagicStick(BulletTexture, { 50, 0 });
-	//_player->_allWeapons.emplace_back(_magicStick);
+	// Инициализация оружия
+	SDL_Texture* BulletTexture = Help::LoadTexture(renderer, "Textures/Models/box.bmp");
+	_magicStick = new MagicStick(BulletTexture);
+	_player->_allWeapons.emplace_back(_magicStick);
 
 
 	// Loading player texture
@@ -178,6 +182,7 @@ void Game::HandleEvents() {
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT) {
 			isRunning = false;
+			return; // Выходим из метода сразу после получения события SDL_QUIT
 		}
 		if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym) {
