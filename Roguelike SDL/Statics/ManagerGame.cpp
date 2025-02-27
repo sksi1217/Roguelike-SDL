@@ -1,5 +1,16 @@
 ﻿#include "ManagerGame.h"
 
-// Definition of static term
-std::vector<GameObject*> ManagerGame::gameObjects;
-std::vector<GameObject*> ManagerGame::enemies;
+// Определение статических членов
+std::vector<std::unique_ptr<GameObject>> ManagerGame::gameObjects;
+std::vector<std::unique_ptr<GameObject>> ManagerGame::enemies;
+
+// Методы класса
+void ManagerGame::AddGameObject(std::unique_ptr<GameObject> obj) {
+    if (obj && obj->IsActive) {
+        gameObjects.emplace_back(std::move(obj));
+    }
+}
+
+void ManagerGame::Clear() {
+    gameObjects.clear();
+}

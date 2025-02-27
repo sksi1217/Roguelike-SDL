@@ -1,16 +1,33 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include <SDL.h>
+#include <SDL.h> // Для SDL_FPoint
 
 class Projectile : public GameObject {
 public:
-    // Конструктор с параметром velocity
-    Projectile(SDL_Texture* texture, SDL_FPoint position, SDL_FPoint velocity, int damage, float lifetime);
+    Projectile(const SDL_FPoint& startPosition, const SDL_FPoint& targetPosition, SDL_Texture* texBull) {
+        Position = startPosition;
+        Texture = texBull;
+        // Вычисляем направление к цели
+        float distanceX = targetPosition.x - startPosition.x;
+        float distanceY = targetPosition.y - startPosition.y;
+        float length = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
-    void Update(float deltaTime) override;
+        // Нормализуем вектор и устанавливаем скорость
+        Velocity.x = distanceX / length * 20.0f; // Скорость 5 пикселей/кадр
+        Velocity.y = distanceY / length * 20.0f;
+    }
 
-    int Damage; // Базовый урон
-    float Lifetime; // Время жизни пули
-    float CurrentLifetime = 0.0f; // Текущее время существования
-    SDL_FPoint Velocity; // Направление и скорость полета
+    void Update(float deltaTime) override {
+        if (IsActive) {
+            Position.x += Velocity.x * deltaTime;
+            Position.y += Velocity.y * deltaTime;
+
+            // Проверяем, вышел ли снаряд за пределы экрана
+            if (Position.x < 0 || Position.x > 800 || Position.y < 0 || Position.y > 600) {
+                IsActive = false; // Отмечаем объект как неактивный
+            }
+        }
+    }
+private:
+    SDL_FPoint Velocity; // Вектор скорости снаряда
 };

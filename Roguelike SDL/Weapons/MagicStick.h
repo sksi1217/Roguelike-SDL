@@ -7,7 +7,5 @@
 
 class MagicStick : public Weapon {
 public:
-    MagicStick(SDL_Texture* TextureBullet, SDL_FPoint StartPosition);
-
-    void Shoot(float deltaTime) override;
+   
 };

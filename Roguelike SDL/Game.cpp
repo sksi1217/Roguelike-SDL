@@ -2,12 +2,15 @@
 
 #include "Game.h"
 #include <iostream>
+#include "Weapons/MagicStick.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
 Player* _player;
 EnemySkelet* _skelet;
+//MagicStick* _magicStick;
+
 Camera camera = { {800, 600}, 5 };
 
 // Designer
@@ -51,10 +54,6 @@ Game::Game(const char* title, int width, int height) {
 
 // Destructor
 Game::~Game() {
-	for (auto obj : ManagerGame::gameObjects) {
-		delete obj; // Remove all objects from the list
-	}
-
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	IMG_Quit();
@@ -71,19 +70,27 @@ void Game::Initialize() {
 void Game::LoadContent() {
 	std::cout << "Loading content..." << std::endl;
 
+	SDL_Texture* BulletTexture = Help::LoadTexture(renderer, "Textures/Models/box.bmp");
+
 
 	// Loading player texture
 	SDL_Texture* playerTexture = Help::LoadTexture(renderer, "Textures/Models/player1.bmp");
-	_player = new Player(playerTexture, { 0, 10 });
-	ManagerGame::gameObjects.push_back(_player); // Adding a player to the object list
+	_player = new Player(playerTexture, { 0, 10 }, BulletTexture);
+	ManagerGame::gameObjects.emplace_back(_player); // Adding a player to the object list
+
+
+
+	//_magicStick = new MagicStick(BulletTexture, { 50, 0 });
+	//_player->_allWeapons.emplace_back(_magicStick);
+
 
 	// Loading player texture
 	// SDL_Texture* playeTexture = Help::LoadTexture(renderer, "Textures/Models/player1.bmp");
 	_skelet = new EnemySkelet(playerTexture, { 60, 0 });
-	ManagerGame::gameObjects.push_back(_skelet);
-	ManagerGame::enemies.push_back(_skelet);
+	ManagerGame::gameObjects.emplace_back(_skelet);
+	ManagerGame::enemies.emplace_back(_skelet);
 
-	// Creating other objects
+	/* Creating other objects
 	SDL_Texture* boxTexture = Help::LoadTexture(renderer, "Textures/Models/box.bmp");
 	GameObject* box1 = new GameObject();
 	box1->Position = { -16, 20 };
@@ -92,7 +99,7 @@ void Game::LoadContent() {
 	box1->HeightColliderY = 16;
 	box1->Texture = boxTexture;
 	box1->IsStatic = true;
-	ManagerGame::gameObjects.push_back(box1);
+	ManagerGame::gameObjects.emplace_back(box1);
 
 
 	GameObject* box2 = new GameObject();
@@ -102,30 +109,47 @@ void Game::LoadContent() {
 	box2->HeightColliderY = 16;
 	box2->Texture = boxTexture;
 	box2->IsStatic = true;
-	ManagerGame::gameObjects.push_back(box2);
+	ManagerGame::gameObjects.emplace_back(box2);
+	*/
 }
 
 // Logic Update
 void Game::Update(float deltaTime) {
-
 	// Список объектов для удаления
-	std::vector<GameObject*> objectsToRemove;
-	objectsToRemove.clear();
+	std::vector<std::unique_ptr<GameObject>> objectsToRemove;
 
 	_skelet->UpdatePosPlr(_player->Position); // Обновляем позицию игрока для скелета
-	for (auto obj : ManagerGame::gameObjects) {
-		obj->Update(deltaTime); // Обновляем каждый объект
-		if (!obj->IsActive)
-		{
-			objectsToRemove.push_back(obj); // Отложено добавляем объекты для удаления
+
+	// Используем индексированный цикл для безопасности
+	for (size_t i = 0; i < ManagerGame::gameObjects.size(); ++i) {
+		GameObject* obj = ManagerGame::gameObjects[i].get(); // Получаем сырой указатель на объект
+
+		// Проверяем, является ли объект nullptr или неактивным
+		if (!obj || !obj->IsActive) {
+			objectsToRemove.push_back(std::move(ManagerGame::gameObjects[i])); // Отложенно добавляем объекты для удаления
+			ManagerGame::gameObjects[i].reset(); // Очищаем текущий элемент
+			continue;
+		}
+
+		try {
+			obj->Update(deltaTime);
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Error updating object: " << e.what() << std::endl;
 		}
 	}
 
 	// Удаление объектов после завершения итерации
-	for (auto objRemove : objectsToRemove)
-	{
-		ManagerGame::gameObjects.pop_back();
+	for (auto& objPtr : objectsToRemove) {
+		objPtr.reset(); // Очищаем unique_ptr
 	}
+
+	// Удаляем все пустые элементы из вектора
+	ManagerGame::gameObjects.erase(
+		std::remove_if(ManagerGame::gameObjects.begin(), ManagerGame::gameObjects.end(),
+			[](const std::unique_ptr<GameObject>& objPtr) { return objPtr == nullptr; }),
+		ManagerGame::gameObjects.end()
+	);
 
 	camera.UpdateCamera(_player->Position, deltaTime);
 }
@@ -136,7 +160,7 @@ void Game::Draw() {
 	SDL_RenderClear(renderer);
 
 	// Drawing of all objects
-	for (auto obj : ManagerGame::gameObjects) {
+	for (auto& obj : ManagerGame::gameObjects) {
 		obj->Draw(renderer, camera);
 	}
 

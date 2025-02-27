@@ -15,7 +15,7 @@ GameObject::~GameObject() {
 
 // Updating the state of the object
 void GameObject::Update(float deltaTime) {
-    ColliderPosition(); // Обновляем позицию коллайдера
+    //ColliderPosition(); // Обновляем позицию коллайдера
 }
 
 

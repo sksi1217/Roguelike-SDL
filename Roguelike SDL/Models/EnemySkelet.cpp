@@ -1,4 +1,4 @@
-#include "EnemySkelet.h"
+﻿#include "EnemySkelet.h"
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
@@ -59,12 +59,13 @@ void EnemySkelet::NormalizeDirection() {
 void EnemySkelet::HandleMovement(float deltaTime) {
 	Position.x += direction.x * Speed * deltaTime;
 	Position.y += direction.y * Speed * deltaTime;
-	ColliderPosition(); // ��������� ������� ����������
+	ColliderPosition(); // Обновляем позицию коллайдера
 }
 
 void EnemySkelet::HandleCollisions() {
-	for (auto obj : ManagerGame::gameObjects) {
-		if (obj != this && CheckCollision(*obj)) {
+	for (auto& objPtr : ManagerGame::gameObjects) {
+		GameObject* obj = objPtr.get(); // Получаем сырой указатель на объект
+		if (obj != nullptr && obj != this && CheckCollision(*obj)) {
 			ResolveCollision(obj);
 			break;
 		}

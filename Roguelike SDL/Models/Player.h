@@ -9,12 +9,12 @@
 
 class Player : public GameObject {
 public:
-    Player(SDL_Texture* texture, SDL_FPoint startPosition);
+    std::vector<std::unique_ptr<Weapon>> _allWeapons; // Используем unique_ptr
+
+    Player(SDL_Texture* texture, SDL_FPoint startPosition, SDL_Texture* texture1);
     void Update(float deltaTime) override;
 
 private:
-    std::vector<std::unique_ptr<Weapon>> _allWeapons; // Используем unique_ptr
-
     void HandleMovementInput(const Uint8* keyboardState, SDL_FPoint& velocity);
     void UpdateSpriteRow(const SDL_FPoint& velocity);
     void HandleCollisions();
